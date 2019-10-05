@@ -1,0 +1,32 @@
+---
+AllCops:
+  DisplayCopNames:    true
+  DisplayStyleGuide:  true
+  StyleGuideCopsOnly: true
+  TargetRubyVersion:  2.6
+  Exclude:
+    - vendor/bundle/**/*
+    - gemfiles/vendor/**/*
+
+Naming/FileName:
+  Exclude:
+    - tram-middleware.gemspec
+    - lib/tram-middleware.rb
+
+Style/AsciiComments:
+  Enabled: false
+
+Style/ClassAndModuleChildren:
+  Enabled: false
+
+Style/ModuleFunction:
+  Enabled: false
+
+Style/RaiseArgs:
+  Enabled: false
+
+Style/StringLiterals:
+  EnforcedStyle: double_quotes
+
+Style/StringLiteralsInInterpolation:
+  EnforcedStyle: double_quotes
