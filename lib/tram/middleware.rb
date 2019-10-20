@@ -9,6 +9,7 @@ module Tram
   # Configurable Middleware
   #
   class Middleware
+    require_relative "middleware/input"
     require_relative "middleware/stack_layer"
   end
 end
