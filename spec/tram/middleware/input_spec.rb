@@ -33,4 +33,16 @@ RSpec.describe Tram::Middleware::Input do
       end
     end
   end
+
+  describe ".inspect" do
+    subject { input.inspect }
+
+    it "builds human-readable description" do
+      expect(subject).to eq <<~TEXT
+        Input options:
+          foo: Some foo (required)
+          bar: Some bar (required)
+      TEXT
+    end
+  end
 end

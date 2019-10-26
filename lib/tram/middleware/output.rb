@@ -12,6 +12,13 @@ class Tram::Middleware
       def call(result)
         new(result).result
       end
+
+      # Human-readable description of the output contract
+      # @return [String]
+      def inspect
+        desc = dry_initializer.params.first.desc || "A resulting value"
+        "Output: #{desc}\n"
+      end
     end
   end
 end

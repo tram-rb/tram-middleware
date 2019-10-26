@@ -39,4 +39,38 @@ RSpec.describe Tram::Middleware::Stack do
       expect(result).to eq "1"
     end
   end
+
+  describe "#inspect" do
+    subject { stack.inspect }
+
+    before do
+      class Test::Ceil < Tram::Middleware::Layer
+        desc "Adds number to a value"
+
+        option :number, desc: "The number to be added"
+        option :value,  desc: "The source value"
+      end
+
+      class Test::Floor < Tram::Middleware::Layer
+        desc "Returns a value"
+      end
+    end
+
+    let(:stack) { described_class.build(input, output, ceil, floor) }
+
+    let(:ceil) do
+      filter = proc { |opts| opts[:number] = 2 }
+      Tram::Middleware::StackLayer.new(:ceil, Test::Ceil, filter)
+    end
+
+    let(:floor) { Tram::Middleware::StackLayer.new(:floor, Test::Floor) }
+
+    it "returns a human-readable description" do
+      expect(subject).to eq <<~INSPECT
+        ceil: Adds number to a value
+          number: 2 (The number to be added)
+        floor: Returns a value
+      INSPECT
+    end
+  end
 end

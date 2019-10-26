@@ -102,7 +102,14 @@ module Tram
     # Human-readable description of the middleware
     # @return [String]
     def inspect
-      @inspect ||= nil
+      @inspect ||= [
+        [self.class.name, @desc].compact.join(": "),
+        "\n",
+        _shift(@input.inspect),
+        "  Stack layers:\n",
+        _shift(stack.inspect, 4),
+        _shift(@output.inspect)
+      ].join
     end
 
     private
@@ -142,6 +149,10 @@ module Tram
       return name unless existing_layer
 
       raise
+    end
+
+    def _shift(text, spaces = 2)
+      text.lines.map { |line| "#{" " * spaces}#{line}" }.join
     end
   end
 end

@@ -10,4 +10,12 @@ RSpec.describe Tram::Middleware::Output do
       expect(subject).to eq "3"
     end
   end
+
+  describe ".inspect" do
+    subject { output.inspect }
+
+    it "returns a human-readable description" do
+      expect(subject).to eq "Output: A resulting value\n"
+    end
+  end
 end

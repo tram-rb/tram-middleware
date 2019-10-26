@@ -41,4 +41,16 @@ RSpec.describe Tram::Middleware::Layer do
       end
     end
   end
+
+  describe ".inspect" do
+    subject { layer.inspect }
+
+    it "builds human-readable description" do
+      expect(subject).to eq <<~TEXT
+        Test::ModuloDivision: Apply the app to the result of the modulo division
+          modulo: The modulo
+          number: The number to modify
+      TEXT
+    end
+  end
 end

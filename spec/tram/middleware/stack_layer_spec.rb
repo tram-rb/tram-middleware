@@ -19,4 +19,24 @@ RSpec.describe Tram::Middleware::StackLayer do
       expect(subject).to eq BAZ: :bar, FOO: :foo, { bar: :BAZ } => :options
     end
   end
+
+  describe "#inspect" do
+    subject { stack_layer.inspect }
+
+    let(:layer) do
+      Class.new(Tram::Middleware::Layer) do
+        desc "Some layer"
+
+        option :foo, desc: "Some foo"
+        option :bar, desc: "Some bar"
+      end
+    end
+
+    it "returns a human-readable description" do
+      expect(subject).to eq <<~INSPECT
+        foo: Some layer
+          foo: :FOO (Some foo)
+      INSPECT
+    end
+  end
 end

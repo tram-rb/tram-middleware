@@ -68,4 +68,25 @@ RSpec.describe Tram::Middleware do
     #           9.to_s
     it { is_expected.to eq "9" }
   end
+
+  describe "#inspect" do
+    subject { middleware.inspect }
+
+    it "returns a human-readable description" do
+      expect(subject).to eq <<~INSPECT
+        Tram::Middleware: Make some computations
+          Input options:
+            value: Source value below 10 (required)
+          Stack layers:
+            Test::Add: Add number to a value
+              number: 1 (Number to be added)
+            Test::Multiply: Multiply a value by a number
+              number: 2 (Number to multiply by)
+            add_three: Add number to a value
+              number: 3 (Number to be added)
+            Test::Return: Return a source value
+          Output: The computation result
+      INSPECT
+    end
+  end
 end

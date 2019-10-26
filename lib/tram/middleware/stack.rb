@@ -24,7 +24,7 @@ class Tram::Middleware
     # Human-readable description of the stack
     # @return [String]
     def inspect
-      [head, tail].compact.map(&:inspect).join("\n\n")
+      @inspect ||= [head.inspect, tail&.inspect].compact.join
     end
 
     # @!method build(input, output, *layers)

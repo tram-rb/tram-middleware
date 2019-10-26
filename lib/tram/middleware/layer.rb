@@ -48,7 +48,7 @@ class Tram::Middleware
       def option(name, *args, **opts, &block)
         _check!(name)
         opts = opts.slice(:type, :desc, :default, :optional)
-        super(name, *args, **opts, &block)
+        _mutate { super(name, *args, **opts, &block) }
       end
 
       # @!method call(options, &block)
@@ -61,12 +61,33 @@ class Tram::Middleware
         new(options).call(&block)
       end
 
+      # Human-readable description of the layer
+      # @return [String]
+      def inspect
+        @inspect ||= begin
+          header = [name, desc].compact.join(": ")
+          lines =
+            dry_initializer
+            .options
+            .reject { |item| item.target == :options }
+            .map { |item| ["  #{item.target}", item.desc].compact.join(": ") }
+
+          [header, lines, nil].join("\n")
+        end
+      end
+
       private
 
       def _check!(name)
         return unless RESERVED_NAMES.include?(name.to_sym)
 
         raise "Choose another name for this option"
+      end
+
+      def _mutate
+        @inspect = nil
+        yield
+        self
       end
     end
   end
