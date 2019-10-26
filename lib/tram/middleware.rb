@@ -10,6 +10,7 @@ module Tram
   #
   class Middleware
     require_relative "middleware/input"
+    require_relative "middleware/layer"
     require_relative "middleware/output"
     require_relative "middleware/stack_layer"
   end
