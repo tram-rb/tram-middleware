@@ -13,5 +13,6 @@ module Tram
     require_relative "middleware/layer"
     require_relative "middleware/output"
     require_relative "middleware/stack_layer"
+    require_relative "middleware/stack"
   end
 end
