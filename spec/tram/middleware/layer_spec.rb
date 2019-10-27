@@ -37,7 +37,8 @@ RSpec.describe Tram::Middleware::Layer do
       subject { layer.option :options, optional: true }
 
       it "raises an exception" do
-        expect { subject }.to raise_error StandardError
+        expect { subject }
+          .to raise_error(Tram::Middleware::LayerNameError, /'options'/)
       end
     end
   end

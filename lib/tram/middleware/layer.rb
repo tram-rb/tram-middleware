@@ -81,7 +81,7 @@ class Tram::Middleware
       def _check!(name)
         return unless RESERVED_NAMES.include?(name.to_sym)
 
-        raise "Choose another name for this option"
+        raise LayerNameError, name
       end
 
       def _mutate

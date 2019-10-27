@@ -45,7 +45,7 @@ class Tram::Middleware
         if tail
           proc { |**params| tail.call(**params) }
         else
-          proc { |**| raise }
+          proc { |**| raise BottomLayerError, self }
         end
     end
   end

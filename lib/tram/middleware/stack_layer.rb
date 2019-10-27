@@ -7,8 +7,8 @@ class Tram::Middleware
   class StackLayer
     extend Dry::Initializer
 
-    param :name,   proc(&:to_s)
-    param :layer,  reader: :private
+    param :name, proc(&:to_s)
+    param :layer
     param :filter, reader: :private, optional: true
 
     def call(**options, &block)

@@ -27,6 +27,16 @@ RSpec.describe Tram::Middleware::Stack do
 
       it { is_expected.to eq "1" } # (((7 % 4) + 2) % 4).to_s
     end
+
+    context "wheh bottom layer of the stack yields" do
+      let(:stack) do
+        described_class.new head: ceil, input: input, output: output
+      end
+
+      it "raises an exception" do
+        expect { subject }.to raise_error Tram::Middleware::BottomLayerError
+      end
+    end
   end
 
   describe ".build" do

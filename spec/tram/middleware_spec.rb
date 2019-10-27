@@ -58,6 +58,45 @@ RSpec.describe Tram::Middleware do
     end
   end
 
+  describe ".use" do
+    subject { middleware.use Test::Add, **params }
+
+    context "with an acceptable params" do
+      let(:params) { { as: :add_five } }
+
+      it "doesn't raise" do
+        expect { subject }.not_to raise_error
+      end
+    end
+
+    context "when a value of :before option refers to absent layer" do
+      let(:params) { { as: :add_five, before: :add_seven } }
+
+      it "raises an error" do
+        expect { subject }
+          .to raise_error Tram::Middleware::LayerNotFoundError, /'add_seven'/
+      end
+    end
+
+    context "when an explicit name of the layer is already taken" do
+      let(:params) { { as: :add_three } }
+
+      it "raises an error" do
+        expect { subject }
+          .to raise_error Tram::Middleware::LayerNotUniqueError, /'add_three'/
+      end
+    end
+
+    context "when an implicit name of the layer is already taken" do
+      let(:params) { {} }
+
+      it "raises an error" do
+        expect { subject }
+          .to raise_error Tram::Middleware::LayerNotUniqueError, /'Test::Add'/
+      end
+    end
+  end
+
   describe "#call" do
     subject { middleware.call value: "7" }
 
@@ -67,6 +106,22 @@ RSpec.describe Tram::Middleware do
     #        (16 % 10) + 3 = 9
     #           9.to_s
     it { is_expected.to eq "9" }
+
+    context "when the stack is empty" do
+      let(:middleware) do
+        described_class.new do
+          desc "Make some computations"
+
+          option :value, ->(i) { i.to_i % 10 }, desc: "Source value below 10"
+          output proc(&:to_s), desc: "The computation result"
+        end
+      end
+
+      it "raises an error" do
+        expect { subject }
+          .to raise_error Tram::Middleware::EmptyStackError
+      end
+    end
   end
 
   describe "#inspect" do

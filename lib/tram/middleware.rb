@@ -36,6 +36,7 @@ module Tram
   #   # => "Ruby არის გასაოცარია!"
   #
   class Middleware
+    require_relative "middleware/errors"
     require_relative "middleware/input"
     require_relative "middleware/layer"
     require_relative "middleware/output"
@@ -123,7 +124,8 @@ module Tram
 
     def stack
       @stack ||= begin
-        raise if @layers.empty?
+        raise EmptyStackError, self if @layers.empty?
+
         Stack.build(@input, @output, *@layers)
       end
     end
@@ -140,15 +142,15 @@ module Tram
       index = @layers.find_index { |l| l.name == before.to_s }
       return index if index
 
-      raise
+      raise LayerNotFoundError.new(self, before)
     end
 
     def _unique!(name)
       name = name.to_s
-      existing_layer = @layers.any? { |layer| layer.name == name }
+      existing_layer = @layers.find { |layer| layer.name == name }
       return name unless existing_layer
 
-      raise
+      raise LayerNotUniqueError.new(self, existing_layer)
     end
 
     def _shift(text, spaces = 2)
