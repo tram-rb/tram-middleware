@@ -60,18 +60,12 @@ translator = Tram::Middleware.new do
 
   # Build a stack in the natural order from outer to inner layers
   use CheckNecessity
-  use SanitizeNotranslate
+  use SanitizeNotranslate, as: :sanitize
   use GoogleTranslate do |options|
     # Define one of the options, expected by this layer at a load time
     options[:api_key] = ENV["GOOGLE_API_KEY"]
   end
 end
-```
-
-You can also add the layer before another one:
-
-```ruby
-translator.use SanitizeNotranslate, before: :GoogleTranslate
 ```
 
 This allows to extend an already configured middleware
@@ -193,7 +187,7 @@ translator.call text: "The ##Ruby## is awesome!", from: :en, into: :ja
 
 With all the definitions above you can inspect the resulting middleware (that's what descriptions were for):
 
-```ruby
+```text
 > puts translator.inspect
 Tram::Middleware: Translate text from one language into another
   Input options:
@@ -202,12 +196,55 @@ Tram::Middleware: Translate text from one language into another
     into: The target locale (required)
   Stack layers:
     CheckNecessity: Skip translation to the same language
-    SanitizeNotranslate: Prevent translation of texts inside double ##
+    sanitize: Prevent translation of texts inside double ##
     GoogleTranslate: Send text for translation by GoogleTranslateDiff
       api_key: "foobar" (The authentication key to the Google Translate API)
   Output: The translated text
 => nil
 ```
+
+### Extencion of the Existing Stack
+
+Before we composed the stack with the only method `use`, which appends layers to the bottom.
+
+You can also extend the existing stack by adding a layer to the arbitrary place, and removing layers from a stack.
+
+Suppose we have a stack:
+
+```ruby
+translator = Tram::Middleware.new do
+  # ...
+  use CheckNecessity
+  use SanitizeNotranslate, as: :sanitize
+  use GoogleTranslate do |options|
+    # Define one of the options, expected by this layer at a load time
+    options[:api_key] = ENV["GOOGLE_API_KEY"]
+  end
+end
+```
+
+Now we can modify it:
+
+```ruby
+translator.drop :sanitize
+translator.use DoSomethingElse, before: :GoogleTranslate, as: :new_layer
+```
+
+Now the stack differs:
+
+```text
+> puts translator.inspect
+Tram::Middleware: Trrnslate text from one language into another
+  # ...
+  Stack layers:
+    CheckNecessity: Skip translation to the same language
+    new_layer: Do something else
+    GoogleTranslate: Send text for translation by GoogleTranslateDiff
+      api_key: "foobar" (The authentication key to the Google Translate API)
+```
+
+That's how you can do your middleware extendable.
+
 
 ## Development
 

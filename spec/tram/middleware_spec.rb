@@ -97,6 +97,17 @@ RSpec.describe Tram::Middleware do
     end
   end
 
+  describe ".drop" do
+    subject { middleware.drop :add_three }
+
+    it "changes the stack" do
+      expect { subject }
+        .to change { middleware.call value: "7" }
+        .from("9")
+        .to("6")
+    end
+  end
+
   describe "#call" do
     subject { middleware.call value: "7" }
 

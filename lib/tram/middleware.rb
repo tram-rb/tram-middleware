@@ -91,6 +91,13 @@ module Tram
       end
     end
 
+    # Drop the layer by its name
+    # @param [#to_s] name The unique name of the layer
+    # @return [self]
+    def drop(name)
+      _mutate { @layers.delete_if { |layer| layer.name == name.to_s } }
+    end
+
     # @!method call(options)
     # Call the middleware with some +options+ and return the result
     # @param [Hash<Symbol, _>] options
